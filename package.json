@@ -1,0 +1,16 @@
+{
+  "name": "skylanders-inventory",
+  "version": "1.0.0",
+  "description": "Skylanders Inventory",
+  "main": "bin/server.js",
+  "keywords": [
+    "skylanders",
+    "inventory"
+  ],
+  "author": "Joe Ferner",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.2",
+    "express": "^4.13.3"
+  }
+}
