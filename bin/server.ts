@@ -1,13 +1,42 @@
 /// <reference path="../definitions/express/express.d.ts" />
+/// <reference path="../lib/flatjsondb.ts" />
+/// <reference path="../lib/skylanders.d.ts" />
 
 import express = require('express');
-var app:express.Express = express();
+import skylanders = require('skylanders');
+var templates = require('../lib/templates');
+var flatjsondb = require('../lib/flatjsondb');
+import path = require('path');
 
-require('../lib/routes')(app);
+var staticDirectory = path.join(__dirname, '../static');
 
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+function run(callback:(err:Error)=>any) {
+  var app:skylanders.Express = <skylanders.Express>express();
+  app.sendInTemplate = function (res:skylanders.Response, data:any) {
+    var html = app.templates['main.hbs'](data);
+    res.send(html);
+  };
+  app.db = new flatjsondb('data');
+  templates.load(function (err, templates) {
+    if (err) {
+      return callback(err);
+    }
+    app.templates = templates;
 
-  console.log('listening at http://%s:%s', host, port);
+    require('../lib/routes')(app);
+    app.use(express.static(staticDirectory));
+
+    var server = app.listen(3000, function () {
+      var host = server.address().address;
+      var port = server.address().port;
+
+      console.log('listening at http://%s:%s', host, port);
+    });
+  });
+}
+
+run(function (err) {
+  if (err) {
+    console.error(err);
+  }
 });
