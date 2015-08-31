@@ -5,9 +5,10 @@
 import express = require('express');
 import skylanders = require('skylanders');
 var templates = require('../lib/templates');
-var flatjsondb = require('../lib/flatjsondb');
+import flatjsondb = require('../lib/flatjsondb');
 import path = require('path');
 
+var dataDirectory = path.join(__dirname, '../data');
 var staticDirectory = path.join(__dirname, '../static');
 
 function run(callback:(err:Error)=>any) {
@@ -16,7 +17,7 @@ function run(callback:(err:Error)=>any) {
     var html = app.templates['main.hbs'](data);
     res.send(html);
   };
-  app.db = new flatjsondb('data');
+  app.db = new flatjsondb.Db(dataDirectory);
   templates.load(function (err, templates) {
     if (err) {
       return callback(err);

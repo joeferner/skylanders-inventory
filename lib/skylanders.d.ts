@@ -18,4 +18,11 @@ declare module "skylanders" {
 
   interface Response extends express.Response {
   }
+
+  interface CharacterData {
+    _id:string;
+    _dataKeys:string[];
+
+    name:string;
+  }
 }

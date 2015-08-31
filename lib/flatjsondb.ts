@@ -7,7 +7,7 @@ import glob = require('glob');
 import path = require('path');
 import async = require('async');
 
-module FlatJsonDb {
+module flatjsondb {
   interface MapResultCallback<T> {
     (err:Error, result:T):void;
   }
@@ -18,6 +18,20 @@ module FlatJsonDb {
     (err:Error, results:T[]): void;
   }
 
+  interface EachCallback {
+    (err?:Error): void;
+  }
+  interface EachFunction<T> {
+    (item:T, callback:EachCallback): void;
+  }
+  interface EachDoneFunction {
+    (err:Error): void;
+  }
+
+  interface LoadFunction {
+    (fileName:string, callback:(err:Error, result:Object)=>any):void;
+  }
+
   export class Db {
     directory:string;
 
@@ -25,7 +39,7 @@ module FlatJsonDb {
       this.directory = directory;
     }
 
-    table(table:string) {
+    table(table:string):Table {
       return new Table(this, table);
     }
 
@@ -36,23 +50,24 @@ module FlatJsonDb {
 
   class Query {
     table:Table;
+    load:LoadFunction;
 
-    constructor(table:Table, load:(fileName:string, callback:(err:Error, result)=>any)=>any) {
+    constructor(table:Table, load:LoadFunction) {
       this.table = table;
+      this.load = load;
     }
 
     map<T,R>(mapFunction:MapFunction<T,R>, doneFunction:MapDoneFunction<R>):void {
-      this.table.getFileNames(function (err, fileNames) {
+      this.table.getFileNames((err, fileNames) => {
         if (err) {
           return doneFunction(err, null);
         }
-        async.map(fileNames, function (fileName, callback) {
-          fs.readFile(fileName, 'utf8', function (err, fileData) {
+        async.map(fileNames, (fileName, callback) => {
+          this.load(fileName, function (err, obj) {
             if (err) {
               return callback(err, null);
             }
-            var obj = JSON.parse(fileData);
-            mapFunction(obj, function (err, result) {
+            mapFunction(<T>obj, function (err, result) {
               if (err) {
                 return callback(err, null);
               }
@@ -62,9 +77,30 @@ module FlatJsonDb {
         }, doneFunction);
       });
     }
+
+    each<T>(eachFunction:EachFunction<T>, doneFunction:EachDoneFunction):void {
+      this.table.getFileNames((err, fileNames) => {
+        if (err) {
+          return doneFunction(err);
+        }
+        async.eachLimit(fileNames, 5, (fileName, callback) => {
+          this.load(fileName, function (err, obj) {
+            if (err) {
+              return callback(err);
+            }
+            eachFunction(<T>obj, function (err) {
+              if (err) {
+                return callback(err);
+              }
+              return callback(null);
+            });
+          });
+        }, doneFunction);
+      });
+    }
   }
 
-  class Table {
+  export class Table {
     db:Db;
     tableName:string;
 
@@ -74,13 +110,94 @@ module FlatJsonDb {
     }
 
     findAll():Query {
-      return new Query(this, function (fileName, callback) {
-        return callback(null, true);
+      var load = function (fileName:string, callback:(err:Error, obj?:Object)=>any):void {
+        fs.readFile(fileName, 'utf8', function (err, fileData) {
+          if (err) {
+            return callback(err);
+          }
+          var obj = JSON.parse(fileData);
+          obj._id = path.basename(fileName, '.json');
+          var dataGlobPath = path.dirname(fileName) + '/' + obj._id + '*.data';
+          glob(dataGlobPath, function (err, dataFileNames) {
+            if (err) {
+              return callback(err);
+            }
+            for (var i = 0; i < dataFileNames.length; i++) {
+              dataFileNames[i] = path.basename(dataFileNames[i], '.data');
+              dataFileNames[i] = dataFileNames[i].substr(obj._id.length + '.'.length);
+            }
+            obj._dataKeys = dataFileNames;
+            return callback(null, obj);
+          });
+        });
+      };
+      return new Query(this, load);
+    }
+
+    findById(id:string, callback:(err?:Error, data?:Object)=>any):void {
+      var fileName = this.getFileName(id);
+      fs.exists(fileName, function (exists) {
+        if (!exists) {
+          return callback();
+        }
+        fs.readFile(fileName, 'utf8', function (err, data) {
+          if (err) {
+            return callback(err);
+          }
+          var json:Object;
+          try {
+            json = JSON.parse(data);
+          } catch (e) {
+            return callback(e);
+          }
+          return callback(null, json);
+        });
+      });
+    }
+
+    save(id:string, data:Object, callback:(err:Error)=>any):void {
+      delete data._id;
+      delete data._dataKeys;
+
+      var fileName = this.getFileName(id);
+      var dataString = JSON.stringify(data, null, 2);
+      fs.writeFile(fileName, dataString, callback);
+    }
+
+    saveData(id:string, key:string, body, callback:(err:Error)=>any):void {
+      var fileName = this.getFileName(id, key);
+      fs.writeFile(fileName, body, callback);
+    }
+
+    loadData(id:string, key:string, callback:(err:Error, data:Buffer)=>any):void {
+      var fileName = this.getFileName(id, key);
+      fs.readFile(fileName, callback);
+    }
+
+    update(id:string, data:Object, callback:(err:Error)=>any):void {
+      this.findById(id, (err, existingData) => {
+        if (err) {
+          return callback(err);
+        }
+        existingData = existingData || {};
+        for (var key in data) {
+          if (data.hasOwnProperty(key)) {
+            existingData[key] = data[key];
+          }
+        }
+        this.save(id, existingData, callback);
       });
     }
 
     getDirectory():string {
       return path.join(this.db.getDirectory(), this.tableName);
+    }
+
+    getFileName(id:string, key?:string) {
+      if (key) {
+        return path.join(this.getDirectory(), id + '.' + key + '.data');
+      }
+      return path.join(this.getDirectory(), id + '.json');
     }
 
     getFileNames(callback:(err:Error, fileNames:string[])=>any):void {
@@ -100,4 +217,4 @@ module FlatJsonDb {
   }
 }
 
-module.exports = FlatJsonDb.Db;
+export = flatjsondb;
