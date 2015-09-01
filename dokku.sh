@@ -1,3 +1,5 @@
 #!/bin/bash
 
-npm install tsc -g && npm start
+PATH=${PATH}:/app/.heroku/node/bin/
+cd /app/
+npm install tsc -g && tsc -p . && npm start
