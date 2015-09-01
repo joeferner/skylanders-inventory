@@ -1,1 +1,1 @@
-web: npm install tsc -g && npm start
+web: ./dokku.sh
