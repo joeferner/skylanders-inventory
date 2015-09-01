@@ -2,4 +2,5 @@
 
 import path = require('path');
 
-module.exports = path.join(__dirname, '../skylanders-inventory-data');
+module.exports = process.env.DATA_DIR || path.join(__dirname, '../skylanders-inventory-data');
+console.log('using data directory', module.exports);
