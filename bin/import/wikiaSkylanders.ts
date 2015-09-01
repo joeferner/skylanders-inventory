@@ -9,7 +9,7 @@ import async = require('async');
 import flatjsondb = require('../../lib/flatjsondb');
 var cheerio = require('cheerio');
 
-var dataDirectory = path.join(__dirname, '../../data');
+var dataDirectory = require('../../dataDirectory');
 var charactersTable = new flatjsondb.Db(dataDirectory).table('characters');
 var baseUrl = 'http://skylanders.wikia.com';
 

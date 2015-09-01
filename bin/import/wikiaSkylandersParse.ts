@@ -12,7 +12,7 @@ import skylanders = require('skylanders');
 import fs = require('fs');
 var cheerio = require('cheerio');
 
-var dataDirectory = path.join(__dirname, '../../data');
+var dataDirectory = require('../../dataDirectory');
 var charactersTable = new flatjsondb.Db(dataDirectory).table('characters');
 
 charactersTable.findAll().each<skylanders.CharacterData>(function (item:skylanders.CharacterData, callback) {

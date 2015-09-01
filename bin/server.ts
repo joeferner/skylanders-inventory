@@ -9,7 +9,7 @@ import flatjsondb = require('../lib/flatjsondb');
 import path = require('path');
 var bodyParser = require('body-parser');
 
-var dataDirectory = path.join(__dirname, '../data');
+var dataDirectory = require('../dataDirectory');
 var staticDirectory = path.join(__dirname, '../static');
 
 function run(callback:(err:Error)=>any) {
