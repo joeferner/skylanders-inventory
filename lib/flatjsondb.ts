@@ -32,6 +32,11 @@ module flatjsondb {
     (fileName:string, callback:(err:Error, result:Object)=>any):void;
   }
 
+  export interface Data {
+    _id:string;
+    _dataKeys:string[];
+  }
+
   export class Db {
     directory:string;
 
@@ -110,54 +115,44 @@ module flatjsondb {
     }
 
     findAll():Query {
-      var load = function (fileName:string, callback:(err:Error, obj?:Object)=>any):void {
-        fs.readFile(fileName, 'utf8', function (err, fileData) {
-          if (err) {
-            return callback(err);
-          }
-          var obj = JSON.parse(fileData);
-          obj._id = path.basename(fileName, '.json');
-          var dataGlobPath = path.dirname(fileName) + '/' + obj._id + '*.data';
-          glob(dataGlobPath, function (err, dataFileNames) {
-            if (err) {
-              return callback(err);
-            }
-            for (var i = 0; i < dataFileNames.length; i++) {
-              dataFileNames[i] = path.basename(dataFileNames[i], '.data');
-              dataFileNames[i] = dataFileNames[i].substr(obj._id.length + '.'.length);
-            }
-            obj._dataKeys = dataFileNames;
-            return callback(null, obj);
-          });
-        });
-      };
-      return new Query(this, load);
+      return new Query(this, this.load);
     }
 
-    findById(id:string, callback:(err?:Error, data?:Object)=>any):void {
+    findById<T>(id:string, callback:(err?:Error, data?:T)=>any):void {
       var fileName = this.getFileName(id);
-      fs.exists(fileName, function (exists) {
-        if (!exists) {
-          return callback();
+      this.load(fileName, callback);
+    }
+
+    load<T>(fileName:string, callback:(err?:Error, data?:T)=>any):void {
+      fs.readFile(fileName, 'utf8', function (err, fileData) {
+        if (err) {
+          return callback(err);
         }
-        fs.readFile(fileName, 'utf8', function (err, data) {
+        var obj;
+        try {
+          obj = JSON.parse(fileData);
+        } catch (e) {
+          return callback(new Error('Could not load ' + fileName + ': ' + e));
+        }
+        obj._id = path.basename(fileName, '.json');
+        var dataGlobPath = path.dirname(fileName) + '/' + obj._id + '*.data';
+        glob(dataGlobPath, function (err, dataFileNames) {
           if (err) {
             return callback(err);
           }
-          var json:Object;
-          try {
-            json = JSON.parse(data);
-          } catch (e) {
-            return callback(e);
+          for (var i = 0; i < dataFileNames.length; i++) {
+            dataFileNames[i] = path.basename(dataFileNames[i], '.data');
+            dataFileNames[i] = dataFileNames[i].substr(obj._id.length + '.'.length);
           }
-          return callback(null, json);
+          obj._dataKeys = dataFileNames;
+          return callback(null, obj);
         });
       });
     }
 
     save(id:string, data:Object, callback:(err:Error)=>any):void {
-      delete data._id;
-      delete data._dataKeys;
+      delete (<Data>data)._id;
+      delete (<Data>data)._dataKeys;
 
       var fileName = this.getFileName(id);
       var dataString = JSON.stringify(data, null, 2);
@@ -174,7 +169,7 @@ module flatjsondb {
       fs.readFile(fileName, callback);
     }
 
-    update(id:string, data:Object, callback:(err:Error)=>any):void {
+    update<T>(id:string, data:Object, callback:(err:Error, obj?:T)=>any):void {
       this.findById(id, (err, existingData) => {
         if (err) {
           return callback(err);
@@ -185,7 +180,12 @@ module flatjsondb {
             existingData[key] = data[key];
           }
         }
-        this.save(id, existingData, callback);
+        this.save(id, existingData, function (err) {
+          if (err) {
+            return callback(err);
+          }
+          return callback(null, <T>existingData);
+        });
       });
     }
 

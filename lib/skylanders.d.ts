@@ -4,6 +4,7 @@
 
 declare module "skylanders" {
   import express = require('express');
+  import FlatJsonDb = require('flatjsondb');
 
   interface Express extends express.Express {
     db:FlatJsonDb.Db;
@@ -19,10 +20,17 @@ declare module "skylanders" {
   interface Response extends express.Response {
   }
 
-  interface CharacterData {
-    _id:string;
-    _dataKeys:string[];
+  interface CharacterCompatibility {
+    spyrosAdventure?:boolean;
+    giants?:boolean;
+    swapForce?:boolean;
+    trapTeam?:boolean;
+    superchargers?:boolean;
+  }
 
+  interface CharacterData extends FlatJsonDb.Data {
     name:string;
+    compatibility: CharacterCompatibility;
+    own:boolean;
   }
 }

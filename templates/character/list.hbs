@@ -1,10 +1,40 @@
-<table>
+<table class="skylanders">
   <tr>
+    <th></th>
     <th>Name</th>
+    <th>Compatibility</th>
+    <th>Actions</th>
   </tr>
-{{#each characters}}
-  <tr>
-    <td>{{name}}</td>
-  </tr>
-{{/each}}
+  {{#each characters}}
+    <tr data-own="{{own}}" data-id="{{_id}}">
+      <td><img width="100" height="100" src="/character/{{_id}}/thumbnail"></td>
+      <td>{{name}}</td>
+      <td>
+        {{#if compatibility.spyrosAdventure}}
+          <img src="/images/spyrosAdventureSmall.png">
+        {{/if}}
+        {{#if compatibility.giants}}
+          <img src="/images/giantsSmall.png">
+        {{/if}}
+        {{#if compatibility.swapForce}}
+          <img src="/images/swapForceSmall.png">
+        {{/if}}
+        {{#if compatibility.trapTeam}}
+          <img src="/images/trapTeamSmall.png">
+        {{/if}}
+        {{#if compatibility.superchargers}}
+          <img src="/images/superchargersSmall.png">
+        {{/if}}
+      </td>
+      <td>
+        <button class="toggle-own">
+          {{#if own}}
+            Disown
+          {{else}}
+            Own
+          {{/if}}
+        </button>
+      </td>
+    </tr>
+  {{/each}}
 </table>
