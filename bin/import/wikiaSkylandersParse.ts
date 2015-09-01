@@ -47,7 +47,12 @@ charactersTable.findAll().each<skylanders.CharacterData>(function (item:skylande
       var row = cheerio.load(infoBoxHtml);
       var rowTitle = row.root().find('th').text();
       var rowValue = row.root().find('td').text();
-      if (rowTitle.toLowerCase().indexOf('first release') >= 0) {
+      if (rowTitle.toLowerCase().indexOf('element') >= 0) {
+        item.element = rowValue.toLowerCase().trim();
+      } else if (rowTitle.toLowerCase().indexOf('role') >= 0) {
+        item.trapMaster = rowValue.toLowerCase().indexOf('trap master') >= 0;
+        item.mini = rowValue.toLowerCase().indexOf('mini') >= 0;
+      } else if (rowTitle.toLowerCase().indexOf('first release') >= 0) {
         firstRelease = rowValue.toLowerCase().trim();
         if (firstRelease.indexOf('skylanders:') == 0) {
           firstRelease = firstRelease.substr('skylanders:'.length).trim();
@@ -68,7 +73,8 @@ charactersTable.findAll().each<skylanders.CharacterData>(function (item:skylande
           item.compatibility = {
             giants: true,
             swapForce: true,
-            trapTeam: true
+            trapTeam: true,
+            superchargers: true
           };
         } else if (firstRelease == "swap force") {
           item.compatibility = {

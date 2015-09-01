@@ -1,15 +1,23 @@
-<table class="skylanders">
+<input class="skylanders-filter">
+
+<table class="skylanders tablesorter">
+  <thead>
   <tr>
-    <th></th>
+    <th>Element</th>
+    <th>Image</th>
     <th>Name</th>
     <th>Compatibility</th>
+    <th>Roles</th>
     <th>Actions</th>
   </tr>
+  </thead>
+  <tbody>
   {{#each characters}}
     <tr data-own="{{own}}" data-id="{{_id}}">
+      <td><img src="/images/element-{{element}}.png"/></td>
       <td><img width="100" height="100" src="/character/{{_id}}/thumbnail"></td>
       <td>{{name}}</td>
-      <td>
+      <td align="right">
         {{#if compatibility.spyrosAdventure}}
           <img src="/images/spyrosAdventureSmall.png">
         {{/if}}
@@ -27,6 +35,16 @@
         {{/if}}
       </td>
       <td>
+        <ul>
+          {{#if trapMaster}}
+            <li>Trap Master</li>
+          {{/if}}
+          {{#if mini}}
+            <li>Mini</li>
+          {{/if}}
+        </ul>
+      </td>
+      <td>
         <button class="toggle-own">
           {{#if own}}
             Disown
@@ -37,4 +55,5 @@
       </td>
     </tr>
   {{/each}}
+  </tbody>
 </table>

@@ -31,6 +31,9 @@ declare module "skylanders" {
   interface CharacterData extends FlatJsonDb.Data {
     name:string;
     compatibility: CharacterCompatibility;
+    element:string;
+    trapMaster:boolean;
+    mini:boolean;
     own:boolean;
   }
 }
