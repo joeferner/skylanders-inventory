@@ -4,7 +4,7 @@
   "description": "Skylanders Inventory",
   "main": "bin/server.js",
   "scripts": {
-    "build": "./node_modules/.bin/tsc -p .",
+    "prestart": "tsc -p .",
     "start": "./node_modules/.bin/forever ./bin/server.js"
   },
   "keywords": [
@@ -21,7 +21,6 @@
     "forever": "^0.15.1",
     "glob": "^5.0.14",
     "handlebars": "^3.0.3",
-    "request": "^2.61.0",
-    "typescript": "^1.5.3"
+    "request": "^2.61.0"
   }
 }
