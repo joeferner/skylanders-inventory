@@ -1,4 +1,4 @@
-/// <reference path="../../definitions/jquery/jquery.d.ts" />
+/// <reference path="../../lib/skylanders.d.ts" />
 // import $ = require('jquery');
 
 $(function () {

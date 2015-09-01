@@ -1,6 +1,4 @@
-/// <reference path="../definitions/express/express.d.ts" />
-/// <reference path="../definitions/handlebars/handlebars.d.ts" />
-/// <reference path="./flatjsondb.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 
 declare module "skylanders" {
   import express = require('express');

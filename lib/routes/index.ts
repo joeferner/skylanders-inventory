@@ -1,4 +1,5 @@
-/// <reference path="../../definitions/express/express.d.ts" />
+/// <reference path="../skylanders.d.ts" />
+
 import express = require('express');
 
 module.exports = function (app:express.Express) {

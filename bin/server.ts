@@ -1,5 +1,3 @@
-/// <reference path="../definitions/express/express.d.ts" />
-/// <reference path="../lib/flatjsondb.ts" />
 /// <reference path="../lib/skylanders.d.ts" />
 
 import express = require('express');

@@ -1,7 +1,4 @@
-/// <reference path="../definitions/node/node.d.ts" />
-/// <reference path="../definitions/handlebars/handlebars.d.ts" />
-/// <reference path="../definitions/glob/glob.d.ts" />
-/// <reference path="../definitions/async/async.d.ts" />
+/// <reference path="../lib/skylanders.d.ts" />
 
 import handlebars = require('handlebars');
 import glob = require('glob');

@@ -1,6 +1,4 @@
-/// <reference path="../definitions/node/node.d.ts" />
-/// <reference path="../definitions/glob/glob.d.ts" />
-/// <reference path="../definitions/async/async.d.ts" />
+/// <reference path="../lib/skylanders.d.ts" />
 
 import fs= require('fs');
 import glob = require('glob');

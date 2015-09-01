@@ -1,7 +1,4 @@
-/// <reference path="../../definitions/request/request.d.ts" />
-/// <reference path="../../definitions/cheerio/cheerio.d.ts" />
-/// <reference path="../../definitions/async/async.d.ts" />
-/// <reference path="../../lib/flatjsondb.ts" />
+/// <reference path="../../lib/skylanders.d.ts" />
 
 import request = require('request');
 import path = require('path');
