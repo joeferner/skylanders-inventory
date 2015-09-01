@@ -54,4 +54,3 @@ function toggleOwn() {
         $('.toggle-own', row).text(data.own ? 'Disown' : 'Own');
     });
 }
-//# sourceMappingURL=skylanders.js.map

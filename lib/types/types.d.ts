@@ -1,0 +1,1 @@
+/// <reference path="./jquery-tablesorter.d.ts" />

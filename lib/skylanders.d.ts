@@ -1,4 +1,5 @@
 /// <reference path="../typings/tsd.d.ts" />
+/// <reference path="./types/types.d.ts" />
 
 declare module "skylanders" {
   import express = require('express');

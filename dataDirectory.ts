@@ -1,4 +1,4 @@
-/// <reference path="./skylanders.d.ts" />
+/// <reference path="./lib/skylanders.d.ts" />
 
 import path = require('path');
 
