@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Skylanders Inventory",
   "main": "bin/server.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "node ./bin/server.js"
+  },
   "keywords": [
     "skylanders",
     "inventory"
