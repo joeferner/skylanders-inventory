@@ -2,4 +2,4 @@
 
 PATH=${PATH}:/app/.heroku/node/bin/
 cd /app/
-npm install tsc -g && tsc -p . && npm start
+npm install tsc tsd -g && tsd install && tsc -p . && npm start
