@@ -6,12 +6,14 @@ var templates = require('../lib/templates');
 import flatjsondb = require('../lib/flatjsondb');
 import path = require('path');
 var bodyParser = require('body-parser');
+var morgan = require('morgan');
 
 var dataDirectory = require('../dataDirectory');
 var staticDirectory = path.join(__dirname, '../static');
 
 function run(callback:(err:Error)=>any) {
   var app:skylanders.Express = <skylanders.Express>express();
+  app.use(morgan('combined'));
   app.use(bodyParser.urlencoded({extended: true}));
   app.sendInTemplate = function (res:skylanders.Response, data:any) {
     var html = app.templates['main.hbs'](data);
