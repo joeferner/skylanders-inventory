@@ -12,6 +12,16 @@ $(function () {
     },
     type: 'text'
   });
+  $.tablesorter.addParser({
+    id: 'compatibility',
+    is: function (s) {
+      return false;
+    },
+    format: function (str, table, cell) {
+      return $('img', cell).length;
+    },
+    type: 'text'
+  });
 
   $('.toggle-own').click(toggleOwn);
   $('.skylanders-filter').keyup(function () {
@@ -21,6 +31,9 @@ $(function () {
     headers: {
       0: {
         sorter: 'element'
+      },
+      3: {
+        sorter: 'compatibility'
       }
     }
   });

@@ -11,6 +11,16 @@ $(function () {
         },
         type: 'text'
     });
+    $.tablesorter.addParser({
+        id: 'compatibility',
+        is: function (s) {
+            return false;
+        },
+        format: function (str, table, cell) {
+            return $('img', cell).length;
+        },
+        type: 'text'
+    });
     $('.toggle-own').click(toggleOwn);
     $('.skylanders-filter').keyup(function () {
         filterTable($('table.skylanders tbody'), this.value);
@@ -19,6 +29,9 @@ $(function () {
         headers: {
             0: {
                 sorter: 'element'
+            },
+            3: {
+                sorter: 'compatibility'
             }
         }
     });
@@ -54,3 +67,4 @@ function toggleOwn() {
         $('.toggle-own', row).text(data.own ? 'Disown' : 'Own');
     });
 }
+//# sourceMappingURL=skylanders.js.map
