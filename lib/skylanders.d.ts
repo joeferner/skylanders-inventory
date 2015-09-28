@@ -33,6 +33,9 @@ declare module "skylanders" {
     element:string;
     trapMaster:boolean;
     mini:boolean;
+    vehicle:boolean;
+    vehicleType:string;
+    vehicleOwner:string;
     own:boolean;
   }
 }
