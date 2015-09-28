@@ -12,6 +12,10 @@ module.exports = function (req:skylanders.Request, res:skylanders.Response, next
     }
     var template = req.app.templates['character/list.hbs'];
     var body = template({
+      ownCount: characters.filter(function (ch:skylanders.CharacterData) {
+        return ch.own;
+      }).length,
+      totalCount: characters.length,
       characters: characters
     });
     req.app.sendInTemplate(res, {
